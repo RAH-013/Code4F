@@ -1,0 +1,44 @@
+﻿@page "/act10"
+@rendermode InteractiveServer
+
+<PageTitle>Act10</PageTitle>
+<h3>Conocer los dias del mes</h3>
+
+<div class="input-group mb-3">
+    <label class="input-group-text">Mes</label>
+    <input class="form-control" type="number" min="1" max="12" @bind="mes" @oninput="() => dias = 0" />
+</div>
+
+<div class="input-group mb-3">
+    <label class="input-group-text">Año</label>
+    <input class="form-control" type="number" min="1" @bind="año" @oninput="() => dias = 0" />
+</div>
+
+<button type="button" class="btn btn-primary" @onclick="Calcular">Calcular</button>
+
+@if(dias != 0)
+{
+    <h1 class="mt-2">El mes @mes del año @año tiene @dias dias.</h1>
+}
+
+@code {
+    private int mes = 0, año = 0, dias = 0;
+
+    private int[] Dias30 = new int[4] { 4, 6, 9, 11 };
+    private int[] Dias31 = new int[7] { 1, 3, 5, 7, 8, 10, 12 };
+
+    private void Calcular ()
+    {
+        if (Dias30.Contains(mes))
+        {
+            dias = 30;
+        }else if (Dias31.Contains(mes))
+        {
+            dias = 31;
+        }
+        else
+        {
+            dias = (año % 4 == 0 && año % 100 != 0) || (año % 400 == 0) ? 28 : 29;
+        }
+    }
+}

@@ -1,0 +1,56 @@
+﻿@page "/act11"
+@rendermode InteractiveServer
+
+<PageTitle>Act11</PageTitle>
+<h3>Lista de numeros</h3>
+
+<div class="input-group mb-3">
+    <label class="input-group-text">Numero 1</label>
+    <input class="form-control" type="number" min="1" @bind="num1" />
+</div>
+
+<div class="input-group mb-3">
+    <label class="input-group-text">Numero 2</label>
+    <input class="form-control" type="number" min="1" @bind="num2" />
+</div>
+
+<button type="button" class="btn btn-primary" @onclick="Calcular">Calcular</button>
+
+@if(min != 0 && max != 0)
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Impares</th>
+                <th scope="col">Pares</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for(int i = min, x = min + 1; i <= max; i+=2, x+=2)
+            {
+                <tr>
+                    @if(min % 2 != 0)
+                    {
+                        <td>@i</td>
+                        <td>@x</td>
+                    }
+                    else
+                    {
+                        <td>@x</td>
+                        <td>@i</td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private int num1 = 0, num2 = 0, min = 0, max = 0;
+
+    private void Calcular ()
+    {
+        min = (num1 < num2) ? num1 : num2;
+        max = (num1 < num2) ? num2 : num1;
+    }
+}

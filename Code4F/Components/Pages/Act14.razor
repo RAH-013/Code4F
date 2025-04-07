@@ -1,0 +1,103 @@
+﻿@page "/act14"
+@rendermode InteractiveServer
+
+<PageTitle>Act14</PageTitle>
+<h3 class="mb-4">Colección de canciones</h3>
+
+<EditForm class="mb-5" Model="_song" FormName="frmTareas" OnValidSubmit="Guardar">
+	<DataAnnotationsValidator />
+
+	<div class="input-group mb-3">
+		<label class="input-group-text">Canción</label>
+		<InputText @bind-Value="_song.Name" class="form-control" placeholder="Nombre" />
+		<button type="submit" class="btn btn-primary">Agregar</button>
+	</div>
+	<ValidationMessage For="@(() => _song.Name)" class="text-danger" />
+</EditForm>
+
+
+
+
+<div class="d-flex flex-column gap-2">
+	<div class="input-group">
+		<button class="btn btn-secondary" title="Orden ascendente " @onclick="@Ascendente">
+			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-arrow-up" viewBox="0 0 16 16">
+				<path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5" />
+			</svg>
+		</button>
+
+		<input type="search" class="form-control" placeholder="Buscar por palabra clave" @bind-value="@searchText"/>
+
+		<button class="btn btn-secondary" title="Orden descendente" @onclick="@Descendente">
+			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-arrow-down" viewBox="0 0 16 16">
+				<path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1" />
+			</svg>
+		</button>
+	</div>
+	@if (_songs != null && _songs.Count > 0)
+	{
+		@foreach (Song song in _songs)
+		{
+			<div class="input-group" title="@song.Name" hidden="@(!song.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase))">
+				<button type="button" class="btn btn-danger mt-auto" title="Eliminar" @onclick="@(() => Eliminar(song))">
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-trash-fill" viewBox="0 0 16 16">
+						<path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0" />
+					</svg>
+				</button>
+				<input class="form-control text-center" type="text" @bind-value="@song.Name" disabled="@song.State" />
+				@if (song.State)
+				{
+					<button type="button" class="btn btn-info mt-auto" title="Editar" @onclick="@(()=> song.State = false)">
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+							<path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z" />
+						</svg>
+					</button>
+				}
+				else
+				{
+					<button type="button" class="btn btn-success mt-auto" title="Guardar" @onclick="@(()=>song.State=true)">
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-floppy-fill" viewBox="0 0 16 16">
+							<path d="M0 1.5A1.5 1.5 0 0 1 1.5 0H3v5.5A1.5 1.5 0 0 0 4.5 7h7A1.5 1.5 0 0 0 13 5.5V0h.086a1.5 1.5 0 0 1 1.06.44l1.415 1.414A1.5 1.5 0 0 1 16 2.914V14.5a1.5 1.5 0 0 1-1.5 1.5H14v-5.5A1.5 1.5 0 0 0 12.5 9h-9A1.5 1.5 0 0 0 2 10.5V16h-.5A1.5 1.5 0 0 1 0 14.5z" />
+							<path d="M3 16h10v-5.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5zm9-16H4v5.5a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5zM9 1h2v4H9z" />
+						</svg>
+					</button>
+				}
+			</div>
+		}
+	}
+	else
+	{
+		<h2 class="mt-5 text-center">Sin canciones</h2>
+	}
+</div>
+
+@code {
+	private Song _song = new();
+	private List<Song> _songs = new();
+	private string searchText = "";
+
+	private void Guardar()
+	{
+		_songs.Add(_song);
+		_song = new();
+	}
+
+	private void Eliminar(Song song)
+	{
+		_songs.Remove(song);
+	}
+
+	private void Ascendente()
+	{
+		_songs.Sort((a, b) =>
+			StringComparer.OrdinalIgnoreCase.Compare(a.Name, b.Name)
+		);
+	}
+
+	private void Descendente()
+	{
+		_songs.Sort((a, b) =>
+			StringComparer.OrdinalIgnoreCase.Compare(b.Name, a.Name)
+		);
+	}
+}

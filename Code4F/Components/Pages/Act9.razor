@@ -1,0 +1,54 @@
+﻿@page "/"
+@rendermode InteractiveServer
+
+<PageTitle>Act9</PageTitle>
+<h3>Cambio de moneda</h3>
+
+@for (int i = 0; i < arrInput.Length; i++)
+{
+    var tmp = i;
+    <div class="input-group mb-3">
+        <label class="input-group-text">@arrInput[tmp].Name (@arrInput[tmp].Type)</label>
+        <input class="form-control" type="number" min="0" @bind="@arrInput[tmp].Value" @onfocus="ChangeInputState" />
+    </div>
+}
+
+<button type="button" class="btn btn-primary" @onclick="ConvertMoney">Convertir</button>
+
+@code {
+    public class InputData
+    {
+        public required string Name { get; init; } = string.Empty;
+        public required string Type { get; init; } = string.Empty;
+        public decimal Value { get; set; }
+        public decimal Rates { get; init; }
+    }
+
+    private readonly InputData[] arrInput = new InputData[]
+    {
+        new() { Name = "Pesos", Type = "MXN", Rates = 1m },
+        new() { Name = "Dólares", Type = "USD", Rates = 0.059m },
+        new() { Name = "Euros", Type = "EUR", Rates = 0.054m },
+        new() { Name = "Libras", Type = "GBP", Rates = 0.046m }
+    };
+
+    private void ConvertMoney()
+    {
+        var activeInput = arrInput.FirstOrDefault(i => i.Value > 0);
+        if (activeInput is not null)
+        {
+            foreach (var item in arrInput)
+            {
+                item.Value = Math.Round(activeInput.Value * (item.Rates / activeInput.Rates), 2);
+            }
+        }
+    }
+
+    private void ChangeInputState()
+    {
+        for (int i = 0; i < arrInput.Length; i++)
+        {
+            arrInput[i].Value = 0;
+        }
+    }
+}
